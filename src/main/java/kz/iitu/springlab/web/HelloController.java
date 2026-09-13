@@ -22,7 +22,21 @@ public class HelloController {
                 System.getProperty("java.version"),
                 Runtime.getRuntime().availableProcessors());
     }
+    @GetMapping("/case")
+    public CaseResult caseConvert(@RequestParam(defaultValue = "") String text) {
+        String upper = text.toUpperCase();
+        String lower = text.toLowerCase();
+        StringBuilder title = new StringBuilder();
+        for (String w : text.trim().split("\\s+")) {
+            if (w.isEmpty()) continue;
+            if (title.length() > 0) title.append(" ");
+            title.append(Character.toUpperCase(w.charAt(0)));
+            if (w.length() > 1) title.append(w.substring(1).toLowerCase());
+        }
+        return new CaseResult(text, upper, lower, title.toString(), text.length());
+    }
 
+    public record CaseResult(String original, String upper, String lower, String title, int length) { }
     public record Greeting(String message, String owner, LocalDateTime timestamp) { }
     public record Info(String owner, String javaVersion, int cpuCores) { }
 }
