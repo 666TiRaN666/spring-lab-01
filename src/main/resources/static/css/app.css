@@ -1,0 +1,6 @@
+body { background: #f4f6fb; font-family: sans-serif; padding: 24px; }
+h1 { color: #1a237e; }
+table { border-collapse: collapse; background: white; }
+th, td { border: 1px solid #9fa8da; padding: 8px 14px; }
+th { background: #e8eaf6; }
+.flash { background: #c8e6c9; padding: 10px; border: 1px solid #388e3c; }
