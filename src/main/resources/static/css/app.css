@@ -4,3 +4,6 @@ table { border-collapse: collapse; background: white; }
 th, td { border: 1px solid #9fa8da; padding: 8px 14px; }
 th { background: #e8eaf6; }
 .flash { background: #c8e6c9; padding: 10px; border: 1px solid #388e3c; }
+.alert { background: #ffebee; padding: 10px; border: 1px solid #c62828; }
+.is-invalid { border: 2px solid #c62828; }
+.error { color: #c62828; font-size: 0.9em; }

@@ -28,19 +28,26 @@ public class BookService {
         return repository.findById(id);
     }
 
+    public Book requireById(long id) {
+        return repository.findById(id).orElseThrow(() -> new BookNotFoundException(id));
+    }
+
     public Book create(Book book) {
         return repository.save(new Book(null, book.title(), book.author(), book.year()));
     }
 
     public Optional<Book> replace(long id, Book book) {
         if (repository.findById(id).isEmpty()) {
-            return Optional.empty();
+            throw new BookNotFoundException(id);
         }
         return Optional.of(repository.save(new Book(id, book.title(), book.author(), book.year())));
     }
 
     public boolean delete(long id) {
-        return repository.deleteById(id);
+        if (!repository.deleteById(id)) {
+            throw new BookNotFoundException(id);
+        }
+        return true;
     }
 
     // Variant 7: bulk create

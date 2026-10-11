@@ -19,5 +19,13 @@
             <td th:text="${book.year}">2020</td>
         </tr>
     </table>
+
+    <h2>Add a book</h2>
+    <form method="post" action="/books">
+        <input name="title" placeholder="Title" required>
+        <input name="author" placeholder="Author" required>
+        <input name="year" placeholder="Year" required>
+        <button type="submit">Add</button>
+    </form>
 </body>
 </html>
