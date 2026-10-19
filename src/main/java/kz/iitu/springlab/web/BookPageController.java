@@ -6,8 +6,15 @@ import kz.iitu.springlab.catalog.BookService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import java.time.Instant;
 
 @Controller
 @RequestMapping("/books")
@@ -43,7 +50,7 @@ public class BookPageController {
 
     // Replaces the old @RequestParam POST from lab05 (same path+method,
     // otherwise ambiguous mapping). Form fields incl. genre/date are
-    // validated; only title/author/year are stored in Book.
+    // validated; genre is stored in Book since lab07.
     @PostMapping
     public String create(@Valid @ModelAttribute("form") BookForm form,
                          BindingResult binding,          // immediately after!
@@ -56,7 +63,9 @@ public class BookPageController {
         }
 
         Book saved = service.create(new Book(null, form.getTitle(),
-                form.getAuthor(), form.getYear()));
+                form.getAuthor(), form.getYear(),
+                form.getGenre() != null ? form.getGenre() : Genre.FICTION,
+                Instant.now()));
 
         redirect.addFlashAttribute("message",
                 "Book «" + saved.title() + "» has been added");

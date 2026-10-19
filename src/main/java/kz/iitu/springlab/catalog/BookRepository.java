@@ -1,7 +1,10 @@
 package kz.iitu.springlab.catalog;
 
+import kz.iitu.springlab.web.Genre;
 import org.springframework.stereotype.Repository;
 
+import java.time.Instant;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -14,14 +17,16 @@ public class BookRepository {
     private final Map<Long, Book> storage = new ConcurrentHashMap<>();
     private final AtomicLong sequence = new AtomicLong();
 
-    public BookRepository() {                       // three records to start with
-        save(new Book(null, "Effective Java", "Joshua Bloch", 2018));
-        save(new Book(null, "Clean Code", "Robert Martin", 2008));
-        save(new Book(null, "Spring in Action", "Craig Walls", 2022));
+    public BookRepository() {
+        save(new Book(null, "Effective Java", "Joshua Bloch", 2018, Genre.TECH, Instant.now()));
+        save(new Book(null, "Clean Code", "Robert Martin", 2008, Genre.TECH, Instant.now()));
+        save(new Book(null, "Spring in Action", "Craig Walls", 2022, Genre.TECH, Instant.now()));
     }
 
     public List<Book> findAll() {
-        return List.copyOf(storage.values());
+        return storage.values().stream()
+                .sorted(Comparator.comparing(Book::id))
+                .toList();
     }
 
     public Optional<Book> findById(long id) {
@@ -30,7 +35,9 @@ public class BookRepository {
 
     public Book save(Book book) {
         long id = book.id() != null ? book.id() : sequence.incrementAndGet();
-        Book stored = new Book(id, book.title(), book.author(), book.year());
+        Genre genre = book.genre() != null ? book.genre() : Genre.FICTION;
+        Instant createdAt = book.createdAt() != null ? book.createdAt() : Instant.now();
+        Book stored = new Book(id, book.title(), book.author(), book.year(), genre, createdAt);
         storage.put(id, stored);
         return stored;
     }
