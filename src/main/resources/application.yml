@@ -1,0 +1,38 @@
+spring:
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/springlab}
+    username: ${DB_USER:springlab}
+    password: ${DB_PASSWORD:springlab}
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: validate
+  application:
+    name: spring-lab-01
+
+server:
+  port: 8080
+
+app:
+  owner: Ushuzov Ruslan, IT1-2404IS
+  group: IT1-2404IS
+  date-pattern: yyyy-MM-dd HH:mm:ss
+  repeating-times: 3
+  mail:
+    from: no-reply@iitu.kz
+    retry-count: 3
+    timeout: 5s
+    enabled: true
+  cache:
+    ttl: 10m
+    max-entries: 1000
+
+logging:
+  level:
+    kz.iitu: INFO
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,env,configprops,conditions
