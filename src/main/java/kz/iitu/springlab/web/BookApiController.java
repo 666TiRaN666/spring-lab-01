@@ -47,9 +47,17 @@ public class BookApiController {
 
     @Operation(summary = "List all books, optionally filtered by author")
     @GetMapping
-    public List<BookResponse> list(
-            @RequestParam(required = false) String author) {
-        return mapper.toResponseList(service.findAll(author));
+    public org.springframework.data.domain.Page<BookResponse> list(
+            @RequestParam(required = false) String author,
+            @RequestParam(required = false) Genre genre,
+            @org.springframework.data.web.PageableDefault(size = 5, sort = "title")
+            org.springframework.data.domain.Pageable pageable) {
+        return service.find(genre, author, pageable).map(mapper::toResponse);
+    }
+
+    @GetMapping("/scroll")
+    public java.util.Map<String, Object> scroll(@RequestParam(required = false) Long after) {
+        return service.scroll(after, mapper);
     }
 
     @Operation(summary = "Find a book by its identifier")
@@ -66,8 +74,8 @@ public class BookApiController {
         // Variant 7 (18 % 12 + 1 = 7): HATEOAS - self, collection, plus author search
         return EntityModel.of(body,
                 linkTo(methodOn(BookApiController.class).find(id)).withSelfRel(),
-                linkTo(methodOn(BookApiController.class).list(null)).withRel("books"),
-                linkTo(methodOn(BookApiController.class).list(body.author())).withRel("by-author"));
+                linkTo(methodOn(BookApiController.class).list(null, null, null)).withRel("books"),
+                linkTo(methodOn(BookApiController.class).list(body.author(), null, null)).withRel("by-author"));
     }
 
     @Operation(summary = "Create a new book")

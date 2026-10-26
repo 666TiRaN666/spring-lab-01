@@ -1,4 +1,12 @@
 spring:
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/springlab}
+    username: ${DB_USER:springlab}
+    password: ${DB_PASSWORD:springlab}
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: validate
   application:
     name: spring-lab-01
 
