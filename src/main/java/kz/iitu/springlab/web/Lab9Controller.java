@@ -5,6 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 import java.math.BigDecimal;
 import java.util.*;
 
@@ -50,6 +51,15 @@ public class Lab9Controller {
     @GetMapping("/evidence")
     public Map<String, Object> evidence() {
         return evidence.map(Lab9Evidence::getResults).orElse(Map.of("hint", "start with --spring.profiles.active=dev"));
+    }
+
+    /** One experiment only (taskA, taskB, taskC_READ_COMMITTED, taskC_REPEATABLE_READ, taskD, taskE) — fits on one screen. */
+    @GetMapping("/evidence/{section}")
+    public Map<String, Object> evidenceSection(@PathVariable String section) {
+        Object value = evidence().get(section);
+        if (value == null) throw new ResponseStatusException(HttpStatus.NOT_FOUND,
+                "Unknown section " + section + ", available: " + evidence().keySet());
+        return Map.of(section, value);
     }
 
     @ExceptionHandler({IllegalStateException.class, IllegalArgumentException.class, NoSuchElementException.class})

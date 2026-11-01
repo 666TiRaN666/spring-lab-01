@@ -15,7 +15,7 @@ in this repository that would discard the previous implementation, so the work i
 | Task A | `TransferService.transfer`, `transferFailingAfterDebit`, `transferCheckedDefault`, `transferCheckedRollbackFor` |
 | Task B | `AuditService.recordRequired` / `recordRequiresNew` / `recordMandatory`, `TransferService.outerFailsAfterAudit` |
 | Task C, D, E | `Lab9Experiments.isolation`, `optimisticLock`, `migrations` |
-| Web | `/api/lab9/accounts`, `POST /api/lab9/transfer`, `/api/lab9/migrations`, `/api/lab9/evidence` (dev) |
+| Web | `/api/lab9/accounts`, `POST /api/lab9/transfer`, `/api/lab9/migrations`, `/api/lab9/evidence` and `/api/lab9/evidence/{section}` (dev) |
 | Tests | `Lab9TransactionTests` (12 tests, real commits, PostgreSQL `springlab_test`) |
 
 Schema ownership: Flyway owns `accounts`, `audit_log` and `flyway_schema_history`.
@@ -59,7 +59,8 @@ cd /mnt/games/SpringFramework/spring-lab-01 && source .lab08-tools/linux/env.sh
 psql -c "select installed_rank, version, script, success from flyway_schema_history"
 ~~~
 
-Browser: http://localhost:8081/api/lab9/evidence (all experiments),
+Browser: http://localhost:8081/api/lab9/evidence (all experiments) or one experiment per screen:
+http://localhost:8081/api/lab9/evidence/taskA (taskB, taskC_READ_COMMITTED, taskC_REPEATABLE_READ, taskD, taskE),
 http://localhost:8081/api/lab9/migrations (flyway_schema_history).
 
 If the port is busy: `ss -ltnp | grep 808`, then `pkill -f spring-lab-01`.
