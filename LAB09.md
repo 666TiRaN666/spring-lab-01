@@ -24,42 +24,46 @@ The dev profile of lab 8 still uses Hibernate `create-drop` for the book tables;
 dropping the Flyway tables, while `validate` still checks them. `baseline-on-migrate` with
 `baseline-version: 0` lets Flyway start on the lab 8 database that already contains tables.
 
-## Run (PowerShell 5.1)
+## Run (Linux, bash)
 
-First window — PostgreSQL (as in lab 8):
+Installed system-wide: Temurin JDK 25 (`temurin-25-jdk`), `gh`, `postgresql-client-16` (psql).
+Project-local, excluded from Git: PostgreSQL 16 server and its data in `.lab08-tools/linux/`
+(`pgsql/`, `pgdata/`, `logs/`, `env.sh`). Databases `springlab` and `springlab_test`, user and
+password `springlab`. The Windows cluster in `.lab08-tools/pgsql` and `.lab08-tools/pgdata`
+is not used on Linux.
 
-~~~powershell
-cd D:\SpringFramework\spring-lab-01
-& '.\.lab08-tools\pgsql\bin\pg_ctl.exe' -D '.\.lab08-tools\pgdata' status
-if ($LASTEXITCODE -ne 0) {
-    & '.\.lab08-tools\pgsql\bin\pg_ctl.exe' -D '.\.lab08-tools\pgdata' -l '.\.lab08-tools\logs\postgres.log' -o '-h 127.0.0.1 -p 5432' -w start
-}
+Terminal 1 — PostgreSQL, build and run:
+
+~~~bash
+cd /mnt/games/SpringFramework/spring-lab-01
+source .lab08-tools/linux/env.sh
+pg_start
+./mvnw clean package
+java -jar target/spring-lab-01-0.0.1-SNAPSHOT.jar --spring.profiles.active=dev
 ~~~
 
-Second window — build and run:
+Expected: `server started` (or `server is running`), `Tests run: 15, Failures: 0, Errors: 0`,
+`BUILD SUCCESS`; at startup `Migrating schema "public" to version "1 - create accounts"` …
+`"4 - index accounts owner name"` (empty database) or
+`Schema "public" is up to date. No migration necessary.` (restart), then `LAB09_RESULTS {...}`
+and `Started SpringLab01Application`. Stop the application with Ctrl+C, the database with `pg_stop`.
 
-~~~powershell
-cd D:\SpringFramework\spring-lab-01
-.\mvnw.cmd clean package
-java -jar target\spring-lab-01-0.0.1-SNAPSHOT.jar --spring.profiles.active=dev
-~~~
+Terminal 2 — requests and SQL:
 
-Expected: `Tests run: 15, Failures: 0, Errors: 0`, `BUILD SUCCESS`; at startup
-`Migrating schema "public" to version "1 - create accounts"` … `"4 - index accounts owner name"`
-(first start) or `Schema "public" is up to date. No migration necessary.` (restart),
-then `LAB09_RESULTS {...}` and `Started SpringLab01Application`.
-
-Third window — requests:
-
-~~~powershell
-curl.exe -s http://localhost:8081/api/lab9/accounts
-curl.exe -s -X POST "http://localhost:8081/api/lab9/transfer?from=1&to=2&amount=100.00"
-curl.exe -s -i -X POST "http://localhost:8081/api/lab9/transfer?from=1&to=2&amount=5000.00"
-curl.exe -s http://localhost:8081/api/lab9/migrations
+~~~bash
+curl -s http://localhost:8081/api/lab9/accounts
+curl -s -X POST "http://localhost:8081/api/lab9/transfer?from=1&to=2&amount=100.00"
+curl -s -i -X POST "http://localhost:8081/api/lab9/transfer?from=1&to=2&amount=5000.00"
+curl -s http://localhost:8081/api/lab9/migrations
+cd /mnt/games/SpringFramework/spring-lab-01 && source .lab08-tools/linux/env.sh
+psql -c "select installed_rank, version, script, success from flyway_schema_history"
 ~~~
 
 Browser: http://localhost:8081/api/lab9/evidence (all experiments),
 http://localhost:8081/api/lab9/migrations (flyway_schema_history).
+
+If the port is busy: `ss -ltnp | grep 808`, then `pkill -f spring-lab-01`.
+If `pg_start` reports that port 5432 is in use, another PostgreSQL is running (`ss -ltnp | grep 5432`).
 
 ## Observed on PostgreSQL 16.4
 
