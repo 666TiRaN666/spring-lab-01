@@ -1,0 +1,63 @@
+### Lab07 - books API client (run app first on :8080)
+### 1. list
+GET http://localhost:8080/api/books
+Accept: application/json
+
+### 2. one
+GET http://localhost:8080/api/books/1
+Accept: application/json
+
+### 3. missing -> 404 problem+json
+GET http://localhost:8080/api/books/999
+Accept: application/json
+
+### 4. create -> 201 + Location
+POST http://localhost:8080/api/books
+Content-Type: application/json
+
+{
+  "title": "Domain-Driven Design",
+  "author": "Eric Evans",
+  "year": 2003,
+  "genre": "TECH"
+}
+
+### 5. invalid -> 400 problem+json (empty title)
+POST http://localhost:8080/api/books
+Content-Type: application/json
+
+{
+  "title": "",
+  "author": "No Name",
+  "year": 2020,
+  "genre": "FICTION"
+}
+
+### 6. duplicate -> 409 (same title+author as existing)
+POST http://localhost:8080/api/books
+Content-Type: application/json
+
+{
+  "title": "Effective Java",
+  "author": "Joshua Bloch",
+  "year": 2018,
+  "genre": "TECH"
+}
+
+### 7. replace -> 200
+PUT http://localhost:8080/api/books/1
+Content-Type: application/json
+
+{
+  "title": "Effective Java 3rd ed.",
+  "author": "Joshua Bloch",
+  "year": 2018,
+  "genre": "TECH"
+}
+
+### 8. delete -> 204, second time -> 404
+DELETE http://localhost:8080/api/books/2
+
+### 9. docs
+GET http://localhost:8080/v3/api-docs
+Accept: application/json
