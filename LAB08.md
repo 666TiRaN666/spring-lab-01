@@ -7,7 +7,11 @@ Branch lab08 starts at lab07 (ce7054f), preserving labs 1–7. The laboratory ha
 ## Database
 
 Use PostgreSQL, not H2. The workstation has a local PostgreSQL 16 cluster at
-D:\Opencode\SpringFramework\.lab08-tools\pgdata.
+D:\SpringFramework\spring-lab-01\.lab08-tools\pgdata.
+PostgreSQL binaries, data, backups and runtime logs are all inside the project
+under `.lab08-tools/`, which is excluded from Git. No runtime dependency uses
+`D:\Opencode\SpringFramework`; that folder is reserved for study materials and reports.
+
 Development data is disposable: the dev profile uses create-drop and seeds three
 authors, eight books and four tags on every start. The default profile uses validate
 and does not create or seed tables. Set DB_URL, DB_USER and DB_PASSWORD to use another instance.
@@ -15,8 +19,11 @@ and does not create or seed tables. Set DB_URL, DB_USER and DB_PASSWORD to use a
 PowerShell 5.1, first window:
 
 ~~~powershell
-cd D:\Opencode\SpringFramework
-& '.\.lab08-tools\pgsql\bin\pg_ctl.exe' -D '.\.lab08-tools\pgdata' -l '.\Lab8\postgres.log' -o '-h 127.0.0.1 -p 5432' -w start
+cd D:\SpringFramework\spring-lab-01
+& '.\.lab08-tools\pgsql\bin\pg_ctl.exe' -D '.\.lab08-tools\pgdata' status
+if ($LASTEXITCODE -ne 0) {
+    & '.\.lab08-tools\pgsql\bin\pg_ctl.exe' -D '.\.lab08-tools\pgdata' -l '.\.lab08-tools\logs\postgres.log' -o '-h 127.0.0.1 -p 5432' -w start
+}
 ~~~
 
 If the cluster is already running, use pg_ctl status instead of starting a second instance.
@@ -67,7 +74,7 @@ http://localhost:8081/swagger-ui/index.html.
 ## Schema and SQL evidence
 
 ~~~powershell
-cd D:\Opencode\SpringFramework
+cd D:\SpringFramework\spring-lab-01
 $env:PGPASSWORD = "springlab"
 & '.\.lab08-tools\pgsql\bin\psql.exe' -h 127.0.0.1 -U springlab -d springlab -c "\d book"
 & '.\.lab08-tools\pgsql\bin\psql.exe' -h 127.0.0.1 -U springlab -d springlab -c "\d book_tag"
