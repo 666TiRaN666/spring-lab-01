@@ -7,6 +7,14 @@ spring:
     open-in-view: false
     hibernate:
       ddl-auto: validate
+    properties:
+      # Lab 9: accounts/audit_log belong to Flyway; Hibernate create-drop must not touch them.
+      hibernate.hbm2ddl.schema_filter_provider: kz.iitu.springlab.bank.FlywayOwnedTables
+  flyway:
+    locations: classpath:db/migration
+    # The lab 8 database already contains Hibernate tables; baseline at 0 so V1 is still applied.
+    baseline-on-migrate: true
+    baseline-version: 0
   application:
     name: spring-lab-01
 
