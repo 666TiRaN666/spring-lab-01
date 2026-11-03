@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="#{book.new}">New book</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body>
+<h1 th:text="#{book.new}">New book</h1>
+
+<p><a th:href="@{/books/new(lang=en)}">EN</a> | <a th:href="@{/books/new(lang=ru)}">RU</a></p>
+
+<form th:action="@{/books}" th:object="${form}" method="post">
+
+<div class="alert" th:if="${#fields.hasAnyErrors()}">
+    <ul>
+        <li th:each="e : ${#fields.allErrors()}" th:text="${e}"></li>
+    </ul>
+</div>
+
+    <label th:text="#{book.title}">Title</label>
+    <input type="text" th:field="*{title}" th:errorclass="is-invalid">
+    <span class="error" th:if="${#fields.hasErrors('title')}"
+          th:errors="*{title}"></span>
+
+    <label th:text="#{book.author}">Author</label>
+    <input type="text" th:field="*{author}" th:errorclass="is-invalid">
+    <span class="error" th:if="${#fields.hasErrors('author')}"
+          th:errors="*{author}"></span>
+
+    <label th:text="#{book.year}">Year</label>
+    <input type="number" th:field="*{year}" th:errorclass="is-invalid">
+    <span class="error" th:if="${#fields.hasErrors('year')}"
+          th:errors="*{year}"></span>
+
+    <label th:text="#{book.genre}">Genre</label>
+    <select th:field="*{genre}" th:errorclass="is-invalid">
+        <option value="">—</option>
+        <option th:each="g : ${genres}"
+                th:value="${g}" th:text="${g}"></option>
+    </select>
+    <span class="error" th:if="${#fields.hasErrors('genre')}"
+          th:errors="*{genre}"></span>
+
+    <label th:text="#{book.pubdate}">Publication date</label>
+    <input type="date" th:field="*{publicationDate}" th:errorclass="is-invalid"
+           th:placeholder="#{book.pubdate.format}">
+    <span class="error" th:if="${#fields.hasErrors('publicationDate')}"
+          th:errors="*{publicationDate}"></span>
+
+    <label><input type="checkbox" th:field="*{available}"> Available</label>
+
+    <button type="submit" th:text="#{form.submit}">Save</button>
+</form>
+</body>
+</html>
