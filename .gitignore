@@ -31,3 +31,6 @@ build/
 
 ### VS Code ###
 .vscode/
+
+# Local PostgreSQL binaries, cluster, backups and runtime logs
+/.lab08-tools/

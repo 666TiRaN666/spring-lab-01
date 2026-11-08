@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<body>
+<!-- The view knows who is looking at it. Hiding a link is a courtesy, not a control. -->
+<div th:fragment="whoami" class="whoami">
+    Logged in as <b sec:authentication="name">anonymous</b>
+    <span sec:authentication="principal.authorities">[ROLE_USER]</span>
+    <a th:href="@{/books}">Catalogue</a>
+    <a sec:authorize="hasRole('ADMIN')" th:href="@{/admin}">Administration</a>
+    <form th:action="@{/logout}" method="post" style="display:inline">
+        <button type="submit">Log out</button>
+    </form>
+</div>
+</body>
+</html>
