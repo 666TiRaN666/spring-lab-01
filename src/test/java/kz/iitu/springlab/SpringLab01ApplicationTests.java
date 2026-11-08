@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.*;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 import static org.junit.jupiter.api.Assertions.*;
@@ -58,6 +59,7 @@ class SpringLab01ApplicationTests {
     }
 
     @Test
+    @WithMockUser(roles = "ADMIN")   // lab 10: create/delete are @PreAuthorize("hasRole('ADMIN')")
     void bulkUpdateAndDirtyCheckingPersistAndDeleteCorrectly() {
         assertEquals(3, books.archiveOlderThan(2010));
         assertEquals(3L, em.createQuery("select count(b) from Book b where b.archived = true", Long.class).getSingleResult());

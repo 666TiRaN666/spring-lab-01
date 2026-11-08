@@ -3,6 +3,7 @@ import jakarta.persistence.EntityManager;
 import kz.iitu.springlab.web.Genre;
 import kz.iitu.springlab.web.dto.BookMapper;
 import org.springframework.data.domain.*;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.util.*;
@@ -35,6 +36,7 @@ public class BookService {
     }
     public Optional<Book> findById(long id) { return repository.findById(id); }
     public Book requireById(long id) { return findById(id).orElseThrow(() -> new BookNotFoundException(id)); }
+    @PreAuthorize("hasRole('ADMIN')")
     @Transactional
     public Book create(Book book) {
         assertNoDuplicate(book.title(), book.author(), null);
@@ -47,6 +49,7 @@ public class BookService {
         if (!authors.isEmpty()) return authors.getFirst();
         Author author = new Author(name, "Unknown"); em.persist(author); return author;
     }
+    @PreAuthorize("hasRole('ADMIN')")
     @Transactional
     public Optional<Book> replace(long id, Book book) {
         Book existing = requireById(id);
@@ -55,10 +58,13 @@ public class BookService {
         existing.setAuthor(resolveAuthor(book.author()));
         return Optional.of(existing);
     }
+    @PreAuthorize("hasRole('ADMIN')")
     @Transactional
     public Book update(long id, Book book) { return replace(id, book).orElseThrow(); }
+    @PreAuthorize("hasRole('ADMIN')")
     @Transactional
     public boolean delete(long id) { repository.delete(requireById(id)); return true; }
+    @PreAuthorize("hasRole('ADMIN')")
     @Transactional
     public List<Book> createAll(List<Book> books) { return books.stream().map(this::create).toList(); }
     private void assertNoDuplicate(String title, String author, Long excludeId) {

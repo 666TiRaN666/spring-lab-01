@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <title>Administration</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body>
+<div th:replace="~{fragments/whoami :: whoami}"></div>
+<h1>Administration — users</h1>
+<p>Rows of <code>app_user</code> and <code>user_role</code>. Only the BCrypt hash is stored; the password itself is not.</p>
+<table>
+    <tr><th>#</th><th>Username</th><th>Roles</th><th>Enabled</th><th>Hash prefix</th><th>Hash length</th></tr>
+    <tr th:each="u : ${users}">
+        <td th:text="${u.id}">1</td>
+        <td th:text="${u.username}">user</td>
+        <td th:text="${#strings.setJoin(u.roles, ', ')}">USER</td>
+        <td th:text="${u.enabled}">true</td>
+        <td><code th:text="${#strings.substring(u.passwordHash, 0, 7)}">$2a$10$</code></td>
+        <td th:text="${#strings.length(u.passwordHash)}">60</td>
+    </tr>
+</table>
+</body>
+</html>

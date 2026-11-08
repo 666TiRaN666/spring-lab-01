@@ -124,7 +124,7 @@ class Lab9TransactionTests {
         List<String> versions = experiments.migrations().stream()
                 .filter(m -> m.get("version") != null && !"0".equals(m.get("version")))
                 .map(m -> (String) m.get("version")).toList();
-        assertEquals(List.of("1", "2", "3", "4"), versions);
+        assertEquals(List.of("1", "2", "3", "4", "5", "6"), versions);   // V5, V6 added in lab 10
         assertTrue(experiments.migrations().stream().allMatch(m -> Boolean.TRUE.equals(m.get("success"))));
     }
 }

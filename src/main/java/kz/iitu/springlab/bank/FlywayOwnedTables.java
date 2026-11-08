@@ -12,7 +12,8 @@ import java.util.Set;
  * create or drop them; validate still checks them against the entities.
  */
 public class FlywayOwnedTables implements SchemaFilterProvider {
-    private static final Set<String> OWNED = Set.of("accounts", "audit_log", "flyway_schema_history");
+    private static final Set<String> OWNED = Set.of("accounts", "audit_log", "flyway_schema_history",
+            "app_user", "user_role", "persistent_logins");
 
     private static final SchemaFilter SKIP_OWNED = new SchemaFilter() {
         @Override public boolean includeNamespace(Namespace namespace) { return true; }

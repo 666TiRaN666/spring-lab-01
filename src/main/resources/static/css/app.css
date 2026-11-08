@@ -7,3 +7,5 @@ th { background: #e8eaf6; }
 .alert { background: #ffebee; padding: 10px; border: 1px solid #c62828; }
 .is-invalid { border: 2px solid #c62828; }
 .error { color: #c62828; font-size: 0.9em; }
+.whoami { background: #e8eaf6; padding: 8px 12px; margin-bottom: 16px; }
+.whoami a, .whoami form { margin-left: 12px; }

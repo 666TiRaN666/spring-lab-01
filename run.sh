@@ -40,7 +40,13 @@ start_db() {
     else
         port_busy 5432 && fail "порт 5432 занят другим процессом: $(ss -ltnp 'sport = :5432' | tail -1)"
         say "Запускаю PostgreSQL (127.0.0.1:5432, база springlab)"
-        pg_start >/dev/null
+        # A previous ./run.sh may still be shutting the server down: retry until the port listens.
+        for _ in $(seq 1 30); do
+            port_busy 5432 && break
+            pg_status >/dev/null 2>&1 || pg_start >/dev/null 2>&1 || true
+            sleep 0.5
+        done
+        port_busy 5432 || fail "PostgreSQL не запустился, смотрите $TOOLS/logs/postgres.log"
         STARTED_DB=1
     fi
 }
@@ -64,7 +70,7 @@ run_app() {
     local profile="$1" port="$2"
     port_busy "$port" && fail "порт $port занят. Посмотреть: ss -ltnp | grep $port ; остановить: ./run.sh stop"
     # Stop PostgreSQL on exit only if this script started it.
-    trap 'echo; if [[ $STARTED_DB == 1 ]]; then say "Останавливаю PostgreSQL"; pg_stop >/dev/null; fi' EXIT
+    trap 'echo; if [[ $STARTED_DB == 1 ]] && pg_status >/dev/null 2>&1; then say "Останавливаю PostgreSQL"; pg_stop >/dev/null; fi' EXIT
     say "Запуск: профиль $profile, http://localhost:$port  (остановка: Ctrl+C)"
     if [[ $profile == dev ]]; then say "Лаб9: http://localhost:$port/api/lab9/evidence"; fi
     local args=()
@@ -93,7 +99,12 @@ case "$MODE" in
         pg_status | head -1 || true
         for p in 8080 8081; do port_busy $p && echo "Приложение слушает порт $p" || echo "Порт $p свободен"; done ;;
     stop)
-        if pkill -f 'spring-lab-01-0.0.1-SNAPSHOT.jar'; then say "Приложение остановлено"; else say "Приложение не было запущено"; fi
+        if pkill -f 'spring-lab-01-0.0.1-SNAPSHOT.jar'; then
+            # Wait for the application (and the ./run.sh that started it) to finish shutting down.
+            for _ in $(seq 1 30); do pgrep -f 'spring-lab-01-0.0.1-SNAPSHOT.jar' >/dev/null || break; sleep 0.5; done
+            sleep 1
+            say "Приложение остановлено"
+        else say "Приложение не было запущено"; fi
         if pg_status >/dev/null 2>&1; then pg_stop >/dev/null; say "PostgreSQL остановлен"; else say "PostgreSQL не был запущен"; fi ;;
     -h|--help|help)
         sed -n '2,10p' "$0" | sed 's/^# \{0,1\}//' ;;
